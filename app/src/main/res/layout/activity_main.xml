@@ -8,6 +8,8 @@
     tools:context=".MainActivity"
     android:background="@color/myBackgroundColor">
 
+
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/character_edit_layout"
     android:layout_width="300dp"
@@ -30,6 +32,7 @@
         android:textColorHint="@color/myHintColor"
         android:fontFamily="monospace"
         android:textStyle="bold"
+        android:background="@color/myHintColor"
 
         />
 
@@ -49,7 +52,8 @@
             android:layout_height="50dp"
             android:hint="Enter Realm Name"
             android:fontFamily="monospace"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:background="@color/myHintColor"/>
 
 
 
@@ -65,5 +69,7 @@
         android:text="SUBMIT"
         android:fontFamily="monospace"
         />
+
+
 
 </android.support.constraint.ConstraintLayout>
