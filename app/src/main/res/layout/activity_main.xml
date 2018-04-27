@@ -48,6 +48,7 @@
         android:textColorHint="#000000">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/realm_name_edit"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Enter Realm Name"
@@ -60,6 +61,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
+        android:id="@+id/submit_button_main"
         android:layout_width="200dp"
         android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="@id/main_constraint_view"
@@ -69,6 +71,13 @@
         android:text="SUBMIT"
         android:fontFamily="monospace"
         />
+
+    <android.support.v7.widget.ContentFrameLayout
+        android:id="@+id/frame_layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.ContentFrameLayout>
 
 
 
