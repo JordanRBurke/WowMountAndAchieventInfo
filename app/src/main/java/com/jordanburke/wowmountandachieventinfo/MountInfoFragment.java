@@ -2,12 +2,21 @@ package com.jordanburke.wowmountandachieventinfo;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,9 +30,29 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class MountInfoFragment extends Fragment {
 
+
+
+
+    public final static String ACCOUNT_NAME = "account_name";
+    public final static String REALM_NAME = "realm_name";
+
+
     private Retrofit retrofit;
-    private String baseUrl = "https://us.api.battle.net/wow/character/Thrall/Amabo?fields=mounts&locale=en_US&apikey=5r2rskc5qp9x2mh7dtabxjznz4vf2dc5";
+    private String baseUrl = "https://us.api.battle.net/wow/character/";
     private WowRetrofitInterface wowRetrofitInterface;
+    private MountInfoFragment mountInfoFragment;
+    private MountAdapter adapter;
+    @BindView(R.id.mount_recycler_view)
+    protected RecyclerView recyclerView;
+    private List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> collectedMounts;
+//    @BindView(R.id.mount_text_view)
+//    protected TextView mountTitle;
+
+
+
+
+
+//    private String wowName = getArguments().getString(ACCOUNT_NAME).toString();
 
 
     public MountInfoFragment() {
@@ -41,41 +70,29 @@ public class MountInfoFragment extends Fragment {
     }
 
     public static MountInfoFragment newInstance() {
-        
+
         Bundle args = new Bundle();
-        
+
         MountInfoFragment fragment = new MountInfoFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    private void buildRetrofit() {
-        retrofit = new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory
-                (GsonConverterFactory.create()).build();
-        wowRetrofitInterface = retrofit.create(WowRetrofitInterface.class);
+
+
+
+
+
+
+    private String toastError(String error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+
+        return error;
+
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        buildRetrofit();
-    }
 
-    public void makeApiCall(String user, String realm) {
-        wowRetrofitInterface.getWowInformation(user, realm).enqueue(new Callback<WowRetrofitInterface.WowInformation>() {
-            @Override
-            public void onResponse(Call<WowRetrofitInterface.WowInformation> call, Response<WowRetrofitInterface.WowInformation> response) {
-                if (response.isSuccessful()) {
 
-                } else {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<WowRetrofitInterface.WowInformation> call, Throwable t) {
 
-            }
-        });
-    }
 }

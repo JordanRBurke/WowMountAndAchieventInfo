@@ -10,6 +10,7 @@
     >
 
         <TextView
+            android:id="@+id/mount_text_view"
             android:layout_width="220dp"
             android:layout_height="30dp"
             app:layout_constraintRight_toRightOf="@id/item_constraint_layout"
@@ -28,6 +29,8 @@
         app:layout_constraintBottom_toBottomOf="@id/item_constraint_layout"
         app:layout_constraintTop_toTopOf="@id/item_constraint_layout"
         app:layout_constraintLeft_toLeftOf="@id/item_constraint_layout"/>
+
+
 
 
 

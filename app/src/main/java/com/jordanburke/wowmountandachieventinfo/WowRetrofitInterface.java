@@ -7,12 +7,15 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface WowRetrofitInterface {
-    @GET("{name}/{realm}")
-    Call<WowInformation> getWowInformation(@Path("name") String wowUsername, @Path("realm") String wowRealm);
+
+    @GET("{realm}/{name}")
+    Call<WowInformation> getWowInformation(@Path("realm") String wowRealm, @Path("name") String wowUsername, @Query("fields") String mounts, @Query("apiKey") String apiKey);
 
     class WowInformation {
+
         @SerializedName("mounts")
         private Mounts wowMounts;
         @SerializedName("achievements")
@@ -43,6 +46,8 @@ public interface WowRetrofitInterface {
                 public String getName() {
                     return name;
                 }
+
+                @SerializedName("icon")
 
                 private void listAllNames(List<CollectedMounts> collectedMountsList) {
 
