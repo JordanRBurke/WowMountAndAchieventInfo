@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -60,17 +61,23 @@ public class MainActivity extends AppCompatActivity {
 //        mountInfoFragment.setArguments(bundle);
         String usernameWow = characterName.getText().toString();
         String realmWow = realmName.getText().toString();
-        makeApiCall(usernameWow, realmWow, "mounts", "en_US", getString(R.string.blizzard_api_key));
+
+
         mountInfoFragment = MountInfoFragment.newInstance();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_main, mountInfoFragment).commit();
+
+
+            makeApiCall(usernameWow, realmWow, "mounts", "en_US", getString(R.string.blizzard_api_key));
+            toastError("AdapterFound");
+
 
 
 
 
     }
 
-    public void makeApiCall(String user, String realm, String mounts,String locale, String key) {
+    public void makeApiCall(final String user, final String realm, final String mounts, final String locale, final String key) {
         wowRetrofitInterface.getWowInformation(user, realm, mounts, locale, key ).enqueue(new Callback<WowInformation>() {
             @Override
             public void onResponse(Call<WowInformation> call, Response<WowInformation> response) {
@@ -79,20 +86,15 @@ public class MainActivity extends AppCompatActivity {
 //                    .setText(response.body().getWowMounts().toString());
 //                    mountTitle.setText(response.body().getWowMounts().toString());
 
+
                     bundleInformation = response.body().getWowMounts().toString();
                     bundle.putString("WOW_API_INFO", bundleInformation);
+                    bundle.putString("WOW__CALL", user);
+                    bundle.putString("WOW_REALM_CALL", realm);
+                    bundle.putString("WOW_MOUNTS_CALL", mounts);
+                    bundle.putString("WOW_LOCALE", locale);
+                    bundle.putInt("WOW_API_KEY", R.string.blizzard_api_key);
                     mountInfoFragment.setArguments(bundle);
-
-//                    bundle.putParcelable("mount_list", response.body());
-//                    bundle.putParcelableArrayList(collectedMounts.containsAll());
-//                    bundle.putParcelableArrayList();
-
-
-
-
-
-
-
 
                 } else {
                     Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
@@ -141,8 +143,14 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
 //            toastError("Error");
 //        }
-    }
 
+    }
+    private String toastError(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+
+        return error;
+
+    }
 
 
 

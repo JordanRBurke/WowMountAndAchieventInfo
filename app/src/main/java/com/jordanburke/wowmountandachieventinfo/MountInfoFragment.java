@@ -48,6 +48,8 @@ public class MountInfoFragment extends Fragment implements Parcelable{
     @BindView(R.id.mount_recycler_view)
     protected RecyclerView recyclerView;
     private List<WowInformation.Mounts.CollectedMounts> collectedMounts;
+    private Bundle bundle;
+    private String bundleInformation;
 //    @BindView(R.id.mount_text_view)
 //    protected TextView mountTitle;
 
@@ -67,6 +69,7 @@ public class MountInfoFragment extends Fragment implements Parcelable{
     protected MountInfoFragment(Parcel in) {
         baseUrl = in.readString();
         mountInfoFragment = in.readParcelable(MountInfoFragment.class.getClassLoader());
+
     }
 
     public static final Creator<MountInfoFragment> CREATOR = new Creator<MountInfoFragment>() {
@@ -87,7 +90,16 @@ public class MountInfoFragment extends Fragment implements Parcelable{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mount_info, container, false);
         ButterKnife.bind(this, view);
+        adapterOkayCheck();
         return view;
+    }
+
+    private void adapterOkayCheck() {
+        if (adapter == null) {
+            toastError("Adapter Is Empty");
+        } else {
+            toastError("Adapter Is Filled");
+        }
     }
 
     public static MountInfoFragment newInstance() {
@@ -111,20 +123,51 @@ public class MountInfoFragment extends Fragment implements Parcelable{
         return error;
 
     }
+    public void makeApiCall(final String user, final String realm, final String mounts, final String locale, final String key) {
+        wowRetrofitInterface.getWowInformation(user, realm, mounts, locale, key ).enqueue(new Callback<WowInformation>() {
+            @Override
+            public void onResponse(Call<WowInformation> call, Response<WowInformation> response) {
+                if (response.isSuccessful()) {
+                    //TODO Get the info you get back here to the Fragment after you create the adaper and then notify dataset has changed
+//                    .setText(response.body().getWowMounts().toString());
+                    response.body().getWowMounts().toString();
+                    toastError("Success");
+
+//                    mountInfoFragment.getArguments().getString("WOW_CALL");
+//                    bundleInformation = response.body().getWowMounts().toString();
+//                    bundle.putString("WOW_API_INFO", bundleInformation);
+//                    bundle.putString("WOW__CALL", user);
+//                    bundle.putString("WOW_REALM_CALL", realm);
+//                    bundle.putString("WOW_MOUNTS_CALL", mounts);
+//                    bundle.putString("WOW_LOCALE", locale);
+//                    bundle.putInt("WOW_API_KEY", R.string.blizzard_api_key);
+//                    mountInfoFragment.setArguments(bundle);
+
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WowInformation> call, Throwable t) {
+                toastError("Failure");
+            }
+        });
+    }
 
     private void setAdapter() {
 
-        mountInfoFragment.getArguments().toString();
-        if (!mountInfoFragment.getArguments().toString().isEmpty()) {
-            adapter = new MountAdapter(collectedMounts);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-            recyclerView.setLayoutManager(linearLayoutManager);
-//        linearLayoutManager.
-            recyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        } else {
-            toastError("Data Not Gathered");
-        }
+//        mountInfoFragment.getArguments().toString();
+
+        adapter = new MountAdapter(collectedMounts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+//       linearLayoutManager.
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+
 
     }
 
