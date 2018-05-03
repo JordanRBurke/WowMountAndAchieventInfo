@@ -8,15 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHolder> {
+public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHolder> implements MainActivity.MountCallback {
 
 
+
+    private List<WowInformation.Mounts.CollectedMounts> mountList;
     
-    private List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> mountList;
-    
-    public MountAdapter(List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> mountList)  {
+    public MountAdapter(List<WowInformation.Mounts.CollectedMounts> mountList)  {
         this.mountList = mountList;
     }
 
@@ -38,10 +39,10 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHol
         return mountList.size();
     }
 
-//    @Override
-//    public void mountClass(List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> collectedMountsList) {
-//         mountList = collectedMountsList;
-//    }
+    @Override
+    public void mountClass(List<WowInformation.Mounts.CollectedMounts> collectedMountsList) {
+         mountList = collectedMountsList;
+    }
 
 
 //    @Override
@@ -64,7 +65,7 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHol
 
         }
 
-        public void bindMountList(WowRetrofitInterface.WowInformation.Mounts.CollectedMounts mounts) {
+        public void bindMountList(WowInformation.Mounts.CollectedMounts mounts) {
 //            mountName.setText(mounts.getColletedMounts().get());
             mountName.setText(mounts.getName());
 

@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.net.CookieHandler;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -35,9 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private String baseUrl = "https://us.api.battle.net/wow/character/";
     private WowRetrofitInterface wowRetrofitInterface;
     private MountAdapter adapter;
-    private RecyclerView recyclerView;
-    private List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> collectedMounts;
+    private List<WowInformation.Mounts.CollectedMounts> collectedMounts;
     private MountCallback mountCallback;
+    private String bundleInformation;
+
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +53,16 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.submit_button_main)
     protected void submitButtonClicked() {
-        mountInfoFragment = MountInfoFragment.newInstance();
+
 //        Bundle bundle = new Bundle();
 //        bundle.putString(ACCOUNT_NAME, characterName.getText().toString());
 //        bundle.putString(REALM_NAME, realmName.getText().toString());
 //        mountInfoFragment.setArguments(bundle);
+        String usernameWow = characterName.getText().toString();
+        String realmWow = realmName.getText().toString();
+        makeApiCall(usernameWow, realmWow, "mounts", "en_US", getString(R.string.blizzard_api_key));
+        mountInfoFragment = MountInfoFragment.newInstance();
+
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_main, mountInfoFragment).commit();
 
 
@@ -62,15 +70,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void makeApiCall(String user, String realm, String mounts, String key) {
-        wowRetrofitInterface.getWowInformation(user, realm, mounts, key).enqueue(new Callback<WowRetrofitInterface.WowInformation>() {
+    public void makeApiCall(String user, String realm, String mounts,String locale, String key) {
+        wowRetrofitInterface.getWowInformation(user, realm, mounts, locale, key ).enqueue(new Callback<WowInformation>() {
             @Override
-            public void onResponse(Call<WowRetrofitInterface.WowInformation> call, Response<WowRetrofitInterface.WowInformation> response) {
+            public void onResponse(Call<WowInformation> call, Response<WowInformation> response) {
                 if (response.isSuccessful()) {
+                    //TODO Get the info you get back here to the Fragment after you create the adaper and then notify dataset has changed
 //                    .setText(response.body().getWowMounts().toString());
 //                    mountTitle.setText(response.body().getWowMounts().toString());
 
-                    mountCallback.mountClass(response.body().getWowMounts().getColletedMounts());
+                    bundleInformation = response.body().getWowMounts().toString();
+                    bundle.putString("WOW_API_INFO", bundleInformation);
+                    mountInfoFragment.setArguments(bundle);
+
+//                    bundle.putParcelable("mount_list", response.body());
+//                    bundle.putParcelableArrayList(collectedMounts.containsAll());
+//                    bundle.putParcelableArrayList();
+
+
+
+
 
 
 
@@ -82,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<WowRetrofitInterface.WowInformation> call, Throwable t) {
+            public void onFailure(Call<WowInformation> call, Throwable t) {
 
             }
         });
@@ -92,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     public interface MountCallback {
 
-        void mountClass(List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> collectedMountsList);
+        void mountClass(List<WowInformation.Mounts.CollectedMounts> collectedMountsList);
 
 
     }
@@ -109,15 +128,14 @@ public class MainActivity extends AppCompatActivity {
 //        private String realmWow;
         super.onStart();
         buildRetrofit();
-        String usernameWow = characterName.getText().toString();
-        String realmWow = realmName.getText().toString();
+
+
 //        usernameWow = getArguments().get(ACCOUNT_NAME).toString();
 //        realmWow = getArguments().get(REALM_NAME).toString();
 //        String user = usernameEdit.getText().toString();
 //        String realm = realmNameEdit.getText().toString();
 
-        makeApiCall(usernameWow, realmWow, "mounts", getString(R.string.blizzard_api_key));
-        setAdapter();
+
 
 //        } catch (Exception e) {
 //            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
@@ -125,14 +143,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    private void setAdapter() {
-        adapter = new MountAdapter(collectedMounts);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-//        linearLayoutManager.
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-    }
+
 
 
 

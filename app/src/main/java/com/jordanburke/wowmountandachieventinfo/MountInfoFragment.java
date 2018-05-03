@@ -1,7 +1,10 @@
 package com.jordanburke.wowmountandachieventinfo;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MountInfoFragment extends Fragment {
+public class MountInfoFragment extends Fragment implements Parcelable{
 
 
 
@@ -44,7 +47,7 @@ public class MountInfoFragment extends Fragment {
     private MountAdapter adapter;
     @BindView(R.id.mount_recycler_view)
     protected RecyclerView recyclerView;
-    private List<WowRetrofitInterface.WowInformation.Mounts.CollectedMounts> collectedMounts;
+    private List<WowInformation.Mounts.CollectedMounts> collectedMounts;
 //    @BindView(R.id.mount_text_view)
 //    protected TextView mountTitle;
 
@@ -59,6 +62,24 @@ public class MountInfoFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+    @SuppressLint("ValidFragment")
+    protected MountInfoFragment(Parcel in) {
+        baseUrl = in.readString();
+        mountInfoFragment = in.readParcelable(MountInfoFragment.class.getClassLoader());
+    }
+
+    public static final Creator<MountInfoFragment> CREATOR = new Creator<MountInfoFragment>() {
+        @Override
+        public MountInfoFragment createFromParcel(Parcel in) {
+            return new MountInfoFragment(in);
+        }
+
+        @Override
+        public MountInfoFragment[] newArray(int size) {
+            return new MountInfoFragment[size];
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,11 +99,11 @@ public class MountInfoFragment extends Fragment {
         return fragment;
     }
 
-
-
-
-
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        setAdapter();
+    }
 
     private String toastError(String error) {
         Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
@@ -91,8 +112,31 @@ public class MountInfoFragment extends Fragment {
 
     }
 
+    private void setAdapter() {
+
+        mountInfoFragment.getArguments().toString();
+        if (!mountInfoFragment.getArguments().toString().isEmpty()) {
+            adapter = new MountAdapter(collectedMounts);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(linearLayoutManager);
+//        linearLayoutManager.
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        } else {
+            toastError("Data Not Gathered");
+        }
+
+    }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(baseUrl);
+        dest.writeParcelable(mountInfoFragment, flags);
+    }
 }
