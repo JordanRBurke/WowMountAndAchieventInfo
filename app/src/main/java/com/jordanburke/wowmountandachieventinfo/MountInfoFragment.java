@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -114,7 +115,15 @@ public class MountInfoFragment extends Fragment implements Parcelable{
     @Override
     public void onStart() {
         super.onStart();
-        setAdapter();
+        String username = mountInfoFragment.getArguments().getString("USERNAME_WOW");
+        String realmName = mountInfoFragment.getArguments().getString("REALM_WOW");
+        String field = mountInfoFragment.getArguments().getString("MOUNTS_WOW");
+        String localeWow = mountInfoFragment.getArguments().getString("LOCALE_WOW");
+        int blizzardKey = mountInfoFragment.getArguments().getInt("BLIZZARD_KEY");
+        List<WowInformation.Mounts.CollectedMounts> collectedMounts = (List<WowInformation.Mounts.CollectedMounts>) getArguments().getParcelableArrayList(MainActivity.MOUNT_LIST);
+        setAdapter(collectedMounts);
+//        makeApiCall(username, realmName, field, localeWow, blizzardKey);
+//        setAdapter();
     }
 
     private String toastError(String error) {
@@ -123,44 +132,14 @@ public class MountInfoFragment extends Fragment implements Parcelable{
         return error;
 
     }
-    public void makeApiCall(final String user, final String realm, final String mounts, final String locale, final String key) {
-        wowRetrofitInterface.getWowInformation(user, realm, mounts, locale, key ).enqueue(new Callback<WowInformation>() {
-            @Override
-            public void onResponse(Call<WowInformation> call, Response<WowInformation> response) {
-                if (response.isSuccessful()) {
-                    //TODO Get the info you get back here to the Fragment after you create the adaper and then notify dataset has changed
-//                    .setText(response.body().getWowMounts().toString());
-                    response.body().getWowMounts().toString();
-                    toastError("Success");
 
-//                    mountInfoFragment.getArguments().getString("WOW_CALL");
-//                    bundleInformation = response.body().getWowMounts().toString();
-//                    bundle.putString("WOW_API_INFO", bundleInformation);
-//                    bundle.putString("WOW__CALL", user);
-//                    bundle.putString("WOW_REALM_CALL", realm);
-//                    bundle.putString("WOW_MOUNTS_CALL", mounts);
-//                    bundle.putString("WOW_LOCALE", locale);
-//                    bundle.putInt("WOW_API_KEY", R.string.blizzard_api_key);
-//                    mountInfoFragment.setArguments(bundle);
 
-                } else {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
 
-                }
-            }
-
-            @Override
-            public void onFailure(Call<WowInformation> call, Throwable t) {
-                toastError("Failure");
-            }
-        });
-    }
-
-    private void setAdapter() {
+    private void setAdapter(WowInformation.Mounts.CollectedMounts> mountList) {
 
 //        mountInfoFragment.getArguments().toString();
 
-        adapter = new MountAdapter(collectedMounts);
+        adapter = new MountAdapter(mountList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 //       linearLayoutManager.
@@ -182,4 +161,6 @@ public class MountInfoFragment extends Fragment implements Parcelable{
         dest.writeString(baseUrl);
         dest.writeParcelable(mountInfoFragment, flags);
     }
+
+
 }

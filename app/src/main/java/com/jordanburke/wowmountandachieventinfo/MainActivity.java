@@ -1,5 +1,6 @@
 package com.jordanburke.wowmountandachieventinfo;
 
+import android.os.Parcelable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     public final static String ACCOUNT_NAME = "account_name";
     public final static String REALM_NAME = "realm_name";
+    public final static String MOUNT_LIST = "mount_list";
 
     @BindView(R.id.submit_button_main)
     protected Button submitButton;
@@ -59,8 +61,19 @@ public class MainActivity extends AppCompatActivity {
 //        bundle.putString(ACCOUNT_NAME, characterName.getText().toString());
 //        bundle.putString(REALM_NAME, realmName.getText().toString());
 //        mountInfoFragment.setArguments(bundle);
-        String usernameWow = characterName.getText().toString();
-        String realmWow = realmName.getText().toString();
+//        String usernameWow = characterName.getText().toString();
+//        String realmWow = realmName.getText().toString();
+//        String mounts = "mounts";
+//        String locale = "en_US";
+//        int blizzardKey = (R.string.blizzard_api_key);
+//        bundle.putString("USERNAME_WOW", usernameWow);
+//        bundle.putString("REALM_WOW", realmWow);
+//        bundle.putString("MOUNTS_WOW", mounts);
+//        bundle.putString("LOCALE_WOW", locale);
+//        bundle.putInt("BLIZZARD_KEY", blizzardKey);
+//        mountInfoFragment.setArguments(bundle);
+
+
 
 
         mountInfoFragment = MountInfoFragment.newInstance();
@@ -68,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_main, mountInfoFragment).commit();
 
 
-            makeApiCall(usernameWow, realmWow, "mounts", "en_US", getString(R.string.blizzard_api_key));
-            toastError("AdapterFound");
+//            makeApiCall(usernameWow, realmWow, "mounts", "en_US", getString(R.string.blizzard_api_key));
+//            toastError("AdapterFound");
 
 
 
@@ -77,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void makeApiCall(final String user, final String realm, final String mounts, final String locale, final String key) {
+    public void makeApiCall(final String user, final String realm, final String mounts, final String locale, final int key) {
         wowRetrofitInterface.getWowInformation(user, realm, mounts, locale, key ).enqueue(new Callback<WowInformation>() {
             @Override
             public void onResponse(Call<WowInformation> call, Response<WowInformation> response) {
@@ -85,16 +98,19 @@ public class MainActivity extends AppCompatActivity {
                     //TODO Get the info you get back here to the Fragment after you create the adaper and then notify dataset has changed
 //                    .setText(response.body().getWowMounts().toString());
 //                    mountTitle.setText(response.body().getWowMounts().toString());
-
-
-                    bundleInformation = response.body().getWowMounts().toString();
-                    bundle.putString("WOW_API_INFO", bundleInformation);
-                    bundle.putString("WOW__CALL", user);
-                    bundle.putString("WOW_REALM_CALL", realm);
-                    bundle.putString("WOW_MOUNTS_CALL", mounts);
-                    bundle.putString("WOW_LOCALE", locale);
-                    bundle.putInt("WOW_API_KEY", R.string.blizzard_api_key);
+                    List<WowInformation.Mounts.CollectedMounts> collectedMounts = response.body().getWowMounts().getColletedMounts();
+                    bundle.putParcelableArrayList(MOUNT_LIST, (ArrayList<? extends Parcelable>) collectedMounts);
                     mountInfoFragment.setArguments(bundle);
+
+
+//                    bundleInformation = response.body().getWowMounts().toString();
+//                    bundle.putString("WOW_API_INFO", bundleInformation);
+//                    bundle.putString("WOW__CALL", user);
+//                    bundle.putString("WOW_REALM_CALL", realm);
+//                    bundle.putString("WOW_MOUNTS_CALL", mounts);
+//                    bundle.putString("WOW_LOCALE", locale);
+//                    bundle.putInt("WOW_API_KEY", R.string.blizzard_api_key);
+//                    mountInfoFragment.setArguments(bundle);
 
                 } else {
                     Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();

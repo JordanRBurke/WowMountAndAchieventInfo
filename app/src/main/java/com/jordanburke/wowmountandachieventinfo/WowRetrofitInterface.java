@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 public interface WowRetrofitInterface {
 
     @GET("{realm}/{name}")
-    Call<WowInformation> getWowInformation(@Path("realm") String wowRealm, @Path("name") String wowUsername, @Query("fields") String mounts, @Query("locale") String locale, @Query("apiKey") String apiKey);
+    Call<WowInformation> getWowInformation(@Path("realm") String wowRealm, @Path("name") String wowUsername, @Query("fields") String mounts, @Query("locale") String locale, @Query("apiKey") int apiKey);
 
 
     }

@@ -65,9 +65,9 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHol
 
         }
 
-        public void bindMountList(WowInformation.Mounts.CollectedMounts mounts) {
+        public void bindMountList(List<WowInformation.Mounts.CollectedMounts> mounts) {
 //            mountName.setText(mounts.getColletedMounts().get());
-            mountName.setText(mounts.getName());
+//            mountName.setText(mounts());
 
         }
     }
