@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHolder> implements MainActivity.MountCallback {
+public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHolder>  {
 
 
 
@@ -39,10 +39,6 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHol
         return mountList.size();
     }
 
-    @Override
-    public void mountClass(List<WowInformation.Mounts.CollectedMounts> collectedMountsList) {
-         mountList = collectedMountsList;
-    }
 
 
 //    @Override
@@ -65,9 +61,10 @@ public class MountAdapter extends RecyclerView.Adapter<MountAdapter.MountViewHol
 
         }
 
-        public void bindMountList(List<WowInformation.Mounts.CollectedMounts> mounts) {
+        public void bindMountList(WowInformation.Mounts.CollectedMounts mount) {
 //            mountName.setText(mounts.getColletedMounts().get());
 //            mountName.setText(mounts());
+            mountName.setText(mount.getName());
 
         }
     }

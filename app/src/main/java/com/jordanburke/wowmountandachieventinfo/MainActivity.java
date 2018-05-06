@@ -1,13 +1,17 @@
 package com.jordanburke.wowmountandachieventinfo;
 
+import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.net.CookieHandler;
@@ -34,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     protected TextInputEditText characterName;
     @BindView(R.id.realm_name_edit)
     protected TextInputEditText realmName;
+
+    @BindView(R.id.progress_bar)
+    protected ProgressBar progressBar;
     private MountInfoFragment mountInfoFragment;
     private Retrofit retrofit;
     private String baseUrl = "https://us.api.battle.net/wow/character/";
@@ -56,13 +63,14 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.submit_button_main)
     protected void submitButtonClicked() {
+        progressBar.setVisibility(View.VISIBLE);
 
 //        Bundle bundle = new Bundle();
 //        bundle.putString(ACCOUNT_NAME, characterName.getText().toString());
 //        bundle.putString(REALM_NAME, realmName.getText().toString());
 //        mountInfoFragment.setArguments(bundle);
-//        String usernameWow = characterName.getText().toString();
-//        String realmWow = realmName.getText().toString();
+        String usernameWow = characterName.getText().toString();
+        String realmWow = realmName.getText().toString();
 //        String mounts = "mounts";
 //        String locale = "en_US";
 //        int blizzardKey = (R.string.blizzard_api_key);
@@ -76,9 +84,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        mountInfoFragment = MountInfoFragment.newInstance();
+        makeApiCall(realmWow, usernameWow, "mounts", getResources().getString(R.string.blizzard_api_key));
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_main, mountInfoFragment).commit();
 
 
 //            makeApiCall(usernameWow, realmWow, "mounts", "en_US", getString(R.string.blizzard_api_key));
@@ -90,17 +97,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void makeApiCall(final String user, final String realm, final String mounts, final String locale, final int key) {
-        wowRetrofitInterface.getWowInformation(user, realm, mounts, locale, key ).enqueue(new Callback<WowInformation>() {
+    public void makeApiCall(final String user, final String realm, final String mounts,final String key) {
+        wowRetrofitInterface.getWowInformation(user, realm, mounts, key ).enqueue(new Callback<WowInformation>() {
             @Override
             public void onResponse(Call<WowInformation> call, Response<WowInformation> response) {
+                progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     //TODO Get the info you get back here to the Fragment after you create the adaper and then notify dataset has changed
 //                    .setText(response.body().getWowMounts().toString());
 //                    mountTitle.setText(response.body().getWowMounts().toString());
                     List<WowInformation.Mounts.CollectedMounts> collectedMounts = response.body().getWowMounts().getColletedMounts();
+                    Bundle bundle = new Bundle();
                     bundle.putParcelableArrayList(MOUNT_LIST, (ArrayList<? extends Parcelable>) collectedMounts);
+
+                    mountInfoFragment = MountInfoFragment.newInstance();
                     mountInfoFragment.setArguments(bundle);
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout_main, mountInfoFragment).commit();
 
 
 //                    bundleInformation = response.body().getWowMounts().toString();
@@ -113,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 //                    mountInfoFragment.setArguments(bundle);
 
                 } else {
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
 
                 }
