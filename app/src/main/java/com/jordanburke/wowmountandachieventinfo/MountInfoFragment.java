@@ -120,8 +120,8 @@ public class MountInfoFragment extends Fragment implements Parcelable{
         String field = mountInfoFragment.getArguments().getString("MOUNTS_WOW");
         String localeWow = mountInfoFragment.getArguments().getString("LOCALE_WOW");
         int blizzardKey = mountInfoFragment.getArguments().getInt("BLIZZARD_KEY");
-        List<WowInformation.Mounts.CollectedMounts> collectedMounts = (List<WowInformation.Mounts.CollectedMounts>) getArguments().getParcelableArrayList(MainActivity.MOUNT_LIST);
-        setAdapter(collectedMounts);
+//
+        List<WowInformation.Mounts.CollectedMounts> collectedMounts =  getArguments().getParcelableArrayList(MainActivity.MOUNT_LIST);
 //        makeApiCall(username, realmName, field, localeWow, blizzardKey);
 //        setAdapter();
     }
@@ -135,7 +135,7 @@ public class MountInfoFragment extends Fragment implements Parcelable{
 
 
 
-    private void setAdapter(WowInformation.Mounts.CollectedMounts> mountList) {
+    private void setAdapter(List<WowInformation.Mounts.CollectedMounts> mountList) {
 
 //        mountInfoFragment.getArguments().toString();
 
